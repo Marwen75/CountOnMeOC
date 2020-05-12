@@ -16,5 +16,15 @@ class CalculatorLogicTest: XCTestCase {
         super.setUp()
         logic = CalculatorLogic()
     }
+    
+    func testGivenANumber_WhenPlusOperatorTapped_ThenTheResultMustBeTheSum() {
+        logic.firstNumber = 5
+        logic.secondNumber = 5
+        logic.sign = "+"
+        
+        logic.calculate()
+        
+        logic.firstResult = 10
+    }
 
 }

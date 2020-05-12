@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
     var calculatorLogic = CalculatorLogic()
+    var userIsCurrentlyTyping: Bool = false
     
     // View Life cycles
     override func viewDidLoad() {
@@ -21,23 +22,27 @@ class ViewController: UIViewController {
     
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        numberButtons.enumerated().forEach { i, numberButton in
-            if sender == numberButton {
-                textView.text = calculatorLogic.addNumber(i)
-            }
+        let number: String = sender.currentTitle!
+        if userIsCurrentlyTyping {
+            textView.text = textView.text + number
+        } else {
+            textView.text = number
+            userIsCurrentlyTyping = true
         }
     }
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
-        if calculatorLogic.canAddOperator {
-            guard let myOperator = sender.title(for: .normal) else { return }
-            calculatorLogic.operands.append(myOperator)
-            textView.text.append(myOperator)
-        }
+        calculatorLogic.sign = sender.currentTitle
+        calculatorLogic.firstNumber = Double(textView.text!)!
+        textView.text = sender.currentTitle
+        userIsCurrentlyTyping = false
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        textView.text = calculatorLogic.calculateTotal()
+        calculatorLogic.secondNumber = Double(textView.text!)!
+        calculatorLogic.calculate()
+        textView.text = String(calculatorLogic.firstResult)
+        userIsCurrentlyTyping = false 
     }
     
     
