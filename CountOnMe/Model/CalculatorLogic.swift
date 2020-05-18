@@ -9,46 +9,114 @@
 import Foundation
 
 class CalculatorLogic {
-    var sign: String?
-    var firstNumber: Double = 0
-    var secondNumber: Double = 0
-    var firstResult: Double = 0
+    var numbers = [Double]()
+    var mathSymbols = [String]()
+    var priorityResult: Double = 0
     
-    
-    func calculate() {
-        if sign != nil {
-            switch sign {
+    func performOperations() -> String {
+        
+        while numbers.count > 1 {
+            
+            let leftNumber = numbers[0]
+            let rightNumber = numbers[1]
+            let symbol = mathSymbols[0]
+            let result: Double
+            
+            switch symbol {
             case "+":
-                firstResult = firstNumber + secondNumber
+                result = leftNumber + rightNumber
             case "-":
-                firstResult = firstNumber - secondNumber
+                result = leftNumber - rightNumber
             case "*":
-                firstResult = firstNumber * secondNumber
+                result = priorityCalculation()
             case "/":
-                firstResult = firstNumber / secondNumber
+                result = priorityCalculation()
             default:
-                break
+                fatalError()
+            }
+            numbers = Array(numbers.dropFirst(2))
+            numbers.insert(result, at: 0)
+            mathSymbols.removeFirst()
+        }
+        return String(numbers[0])
+    }
+    
+    func clear() {
+        numbers = [Double]()
+        mathSymbols = [String]()
+    }
+    
+   private func priorityCalculation() -> Double {
+
+        while mathSymbols.contains("*") || mathSymbols.contains("/") {
+            if let symbolIndex = mathSymbols.firstIndex (where: { $0 == "*" || $0 == "/" }) {
+               
+                let symbol = mathSymbols[symbolIndex]
+                let leftOperand = numbers[symbolIndex - 1]
+                let rightOperand = numbers[symbolIndex]
+                
+                if symbol == "*" {
+                    priorityResult = leftOperand * rightOperand
+                } else {
+                    priorityResult = leftOperand / rightOperand
+                }
+                mathSymbols.remove(at: symbolIndex)
+                numbers.insert(priorityResult, at: symbolIndex - 1)
+                numbers.remove(at: symbolIndex)
             }
         }
+        return priorityResult
     }
-    
-    func resetToZero() {
-        firstNumber = 0
-        secondNumber = 0
-        firstResult = 0
-        sign = nil
-    }
-    
-    
-    var expressionIsCorrect: Bool {
-       return true
-    }
-    
-    var canAddOperator: Bool {
-        return true
-    }
-    
- 
-    
-   
 }
+
+
+/*  var elements: [String] {
+ return textView.text.split(separator: " ").map { "\($0)" }
+ }
+ 
+ // Error check computed variables
+ var expressionIsCorrect: Bool {
+ return elements.last != "+" && elements.last != "-"
+ }
+ 
+ var expressionHaveEnoughElement: Bool {
+ return elements.count >= 3
+ }
+ 
+ var canAddOperator: Bool {
+ return elements.last != "+" && elements.last != "-"
+ }
+ 
+ var expressionHaveResult: Bool {
+ return textView.text.firstIndex(of: "=") != nil
+ }
+ 
+ // Create local copy of operations
+ var operationsToReduce = elements
+ 
+ // Iterate over operations while an operand still here
+ while operationsToReduce.count > 1 {
+ let left = Int(operationsToReduce[0])!
+ let operand = operationsToReduce[1]
+ let right = Int(operationsToReduce[2])!
+ 
+ let result: Int
+ switch operand {
+ case "+": result = left + right
+ case "-": result = left - right
+ default: fatalError("Unknown operator !")
+ }
+ 
+ operationsToReduce = Array(operationsToReduce.dropFirst(3))
+ operationsToReduce.insert("\(result)", at: 0)
+ }
+ 
+ textView.text.append(" = \(operationsToReduce.first!)")
+ }
+ 
+ */
+
+
+
+
+

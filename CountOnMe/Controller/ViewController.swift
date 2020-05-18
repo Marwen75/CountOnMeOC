@@ -12,7 +12,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
     var calculatorLogic = CalculatorLogic()
-    var userIsCurrentlyTyping: Bool = false
+    var userIsTyping: Bool = false
+   
     
     // View Life cycles
     override func viewDidLoad() {
@@ -22,30 +23,86 @@ class ViewController: UIViewController {
     
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        let number: String = sender.currentTitle!
-        if userIsCurrentlyTyping {
-            textView.text = textView.text + number
+        guard let operandText = sender.title(for: .normal) else {return}
+        if userIsTyping {
+            textView.text = textView.text + operandText
         } else {
-            textView.text = number
-            userIsCurrentlyTyping = true
+            textView.text = operandText
+            userIsTyping = true
         }
     }
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
-        calculatorLogic.sign = sender.currentTitle
-        calculatorLogic.firstNumber = Double(textView.text!)!
-        textView.text = sender.currentTitle
-        userIsCurrentlyTyping = false
+        guard let mathSymbol = sender.title(for: .normal) else {return}
+        didPressOperator(newOperator: mathSymbol)
+        textView.text = mathSymbol
+        userIsTyping = false
+    }
+    
+    private func didPressOperator(newOperator: String) {
+        calculatorLogic.numbers.append(Double(textView.text!)!)
+        calculatorLogic.mathSymbols.append(newOperator)
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        calculatorLogic.secondNumber = Double(textView.text!)!
-        calculatorLogic.calculate()
-        textView.text = String(calculatorLogic.firstResult)
-        userIsCurrentlyTyping = false 
+        didPressEqual()
     }
     
+    private func didPressEqual() {
+        calculatorLogic.numbers.append(Double(textView.text!)!)
+        textView.text = " = \(calculatorLogic.performOperations())"
+    }
     
+    @IBAction func tappedClearButton(_ sender: Any) {
+        calculatorLogic.clear()
+        textView.text = ""
+    }
+    
+    /*  var elements: [String] {
+     return textView.text.split(separator: " ").map { "\($0)" }
+     }
+     
+     // Error check computed variables
+     var expressionIsCorrect: Bool {
+     return elements.last != "+" && elements.last != "-"
+     }
+     
+     var expressionHaveEnoughElement: Bool {
+     return elements.count >= 3
+     }
+     
+     var canAddOperator: Bool {
+     return elements.last != "+" && elements.last != "-"
+     }
+     
+     var expressionHaveResult: Bool {
+     return textView.text.firstIndex(of: "=") != nil
+     }
+     
+     // Create local copy of operations
+     var operationsToReduce = elements
+     
+     // Iterate over operations while an operand still here
+     while operationsToReduce.count > 1 {
+     let left = Int(operationsToReduce[0])!
+     let operand = operationsToReduce[1]
+     let right = Int(operationsToReduce[2])!
+     
+     let result: Int
+     switch operand {
+     case "+": result = left + right
+     case "-": result = left - right
+     default: fatalError("Unknown operator !")
+     }
+     
+     operationsToReduce = Array(operationsToReduce.dropFirst(3))
+     operationsToReduce.insert("\(result)", at: 0)
+     }
+     
+     textView.text.append(" = \(operationsToReduce.first!)")
+     }
+     
+     */
     
     
 }

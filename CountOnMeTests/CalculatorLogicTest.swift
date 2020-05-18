@@ -11,20 +11,52 @@ import XCTest
 
 class CalculatorLogicTest: XCTestCase {
     var logic  = CalculatorLogic()
-
+    var controller = ViewController()
+    
     override func setUp() {
         super.setUp()
         logic = CalculatorLogic()
+        controller = ViewController()
     }
     
-    func testGivenANumber_WhenPlusOperatorTapped_ThenTheResultMustBeTheSum() {
-        logic.firstNumber = 5
-        logic.secondNumber = 5
-        logic.sign = "+"
+    func testGivenTwoNumber_WhenPlusOperatorTapped_ThenTheResultMustBeTheSum() {
+        logic.numbers[0] = 2
+        logic.numbers[1] = 2
+        logic.mathSymbol[0] = "+"
         
-        logic.calculate()
-        
-        logic.firstResult = 10
+        XCTAssert(logic.performOperations() == "4.00")
     }
+    
+    func testGivenTwoNumber_WhenMinusOperatorTapped_ThenTheResultMustBeTheDifference() {
+       let _ = logic.numbers[0] = 2
+       let _ = logic.mathSymbol[0] = "+"
+       let _ = logic.numbers[1] = 2
+        
+        
+        XCTAssert(logic.performOperations() == "5.00")
+    }
+    
+    func testGivenTwoNumber_WhenMultiplyOperatorTapped_ThenTheResultMustBeTheMultiplication() {
+       let _ = logic.numbers[0] = 2
+       let _ = logic.mathSymbol[0] = "*"
+       let _ = logic.numbers[1] = 2
+    
+    
+        XCTAssert(logic.performOperations() == "4.00")
+}
+
+func testGivenTwoNumber_WhenDivideOperatorTapped_ThenTheResultMustBeTheDivision() {
+       let _ = logic.numbers[0] = 4
+       let _ = logic.mathSymbol[0] = "/"
+       let _ = logic.numbers[1] = 2
+    
+    
+        XCTAssert(logic.performOperations() == "2.00")
+}
+
+func testGivenSomeNumbers_WhenMultiplyOperatorTapped_ThenTheMultiplicationtMustBeThePriority() {
+    
+}
 
 }
+
