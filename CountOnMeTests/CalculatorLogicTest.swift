@@ -11,52 +11,43 @@ import XCTest
 
 class CalculatorLogicTest: XCTestCase {
     var logic  = CalculatorLogic()
-    var controller = ViewController()
     
     override func setUp() {
         super.setUp()
         logic = CalculatorLogic()
-        controller = ViewController()
     }
     
     func testGivenTwoNumber_WhenPlusOperatorTapped_ThenTheResultMustBeTheSum() {
-        logic.numbers[0] = 2
-        logic.numbers[1] = 2
-        logic.mathSymbol[0] = "+"
+        let leftNumber: Double = 10.0
+        let mathSymbol: String = "+"
+        let rightNumber: Double = 10.0
         
-        XCTAssert(logic.performOperations() == "4.00")
+        XCTAssert(logic.performOperations(leftNumber: leftNumber, rightNumber: rightNumber, mathSymbol: mathSymbol) == 20.0)
     }
     
     func testGivenTwoNumber_WhenMinusOperatorTapped_ThenTheResultMustBeTheDifference() {
-       let _ = logic.numbers[0] = 2
-       let _ = logic.mathSymbol[0] = "+"
-       let _ = logic.numbers[1] = 2
+        let leftNumber: Double = 10.0
+        let mathSymbol: String = "-"
+        let rightNumber: Double = 5.0
         
-        
-        XCTAssert(logic.performOperations() == "5.00")
+        XCTAssert(logic.performOperations(leftNumber: leftNumber, rightNumber: rightNumber, mathSymbol: mathSymbol) == 5.0)
     }
     
     func testGivenTwoNumber_WhenMultiplyOperatorTapped_ThenTheResultMustBeTheMultiplication() {
-       let _ = logic.numbers[0] = 2
-       let _ = logic.mathSymbol[0] = "*"
-       let _ = logic.numbers[1] = 2
+        let leftNumber: Double = 10.0
+        let mathSymbol: String = "*"
+        let rightNumber: Double = 10.0
+        
+        XCTAssert(logic.performOperations(leftNumber: leftNumber, rightNumber: rightNumber, mathSymbol: mathSymbol) == 100.0)
+    }
     
+    func testGivenTwoNumber_WhenDivideOperatorTapped_ThenTheResultMustBeTheDivision() {
+        let leftNumber: Double = 10.0
+        let mathSymbol: String = "/"
+        let rightNumber: Double = 2.0
+        
+        XCTAssert(logic.performOperations(leftNumber: leftNumber, rightNumber: rightNumber, mathSymbol: mathSymbol) == 5.0)
+    }
     
-        XCTAssert(logic.performOperations() == "4.00")
-}
-
-func testGivenTwoNumber_WhenDivideOperatorTapped_ThenTheResultMustBeTheDivision() {
-       let _ = logic.numbers[0] = 4
-       let _ = logic.mathSymbol[0] = "/"
-       let _ = logic.numbers[1] = 2
-    
-    
-        XCTAssert(logic.performOperations() == "2.00")
-}
-
-func testGivenSomeNumbers_WhenMultiplyOperatorTapped_ThenTheMultiplicationtMustBeThePriority() {
-    
-}
-
 }
 
