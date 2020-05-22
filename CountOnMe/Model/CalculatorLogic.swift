@@ -12,20 +12,19 @@ class CalculatorLogic {
     
     private var text: String = ""
     
-    private var elements: [String] {
-    
+    private var expressionToParse: [String] {
         return text.split(separator: " ").map { "\($0)" }
     }
     
-    func performOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
+    private var expressionContainsPriorityOperators: Bool {
+        return expressionToParse.contains("*") || expressionToParse.contains("/")
+    }
+    
+    private func performNonPriorityOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
         
         let result: Double
         
         switch mathSymbol {
-        case "*":
-            result = multiplyTwoNumbers(multiplying: leftNumber, with: rightNumber)
-        case "/":
-            result = divideTwoNumbers(dividing: leftNumber, with: rightNumber)
         case "+":
             result = addTwoNumbers(adding: leftNumber, and: rightNumber)
         case "-":
@@ -48,22 +47,65 @@ class CalculatorLogic {
         return result
     }
     
-    func multiplyTwoNumbers(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func multiplyTwoNumbers(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber * rightNumbert
         return result
     }
     
-    func divideTwoNumbers(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func divideTwoNumbers(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber / rightNumbert
         return result
     }
     
-    func scavengeData(retrieving screenText: String) {
+    func retrieveExpressionToParse(retrieving screenText: String) {
         text.append(screenText)
     }
     
+    func parseExpressionAndReturnResult() -> String {
+        
+        var operationsToReduce = expressionToParse
+        
+        while operationsToReduce.count > 1 {
+            
+            var result: Double
+            
+            if expressionContainsPriorityOperators {
+                if let index = operationsToReduce.firstIndex (where: { $0 == "*" || $0 == "/" }) {
+                    let priorityResult: Double
+                    let prioritySymbol = operationsToReduce[index]
+                    let leftNumber = operationsToReduce[index - 1]
+                    let rightNumber = operationsToReduce[index + 1]
+                    
+                    if let leftDouble = Double(leftNumber), let rightDouble = Double(rightNumber) {
+                        if prioritySymbol == "*" {
+                            priorityResult = multiplyTwoNumbers(multiplying: leftDouble, with: rightDouble)
+                        } else {
+                            priorityResult = divideTwoNumbers(dividing: leftDouble, with: rightDouble)
+                        }
+                        operationsToReduce.remove(at: index - 1)
+                        operationsToReduce.remove(at: index - 1)
+                        operationsToReduce.remove(at: index - 1)
+                        operationsToReduce.insert("\(priorityResult)", at: index - 1)
+                    }
+                }
+            }
+            if operationsToReduce.count == 1 {
+                text.removeAll()
+                return operationsToReduce[0]
+            } else {
+                result = performNonPriorityOperations(leftNumber: Double(operationsToReduce[0])!,
+                                                      rightNumber: Double(operationsToReduce[2])!,
+                                                      mathSymbol: operationsToReduce[1])
+                
+                operationsToReduce = Array(operationsToReduce.dropFirst(3))
+                operationsToReduce.insert("\(result)", at: 0)
+            }
+        }
+        text.removeAll()
+        return operationsToReduce[0]
+    }
 }
 
 

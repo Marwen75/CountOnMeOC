@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
+    
     var calculatorLogic = CalculatorLogic()
     
     // View Life cycles
@@ -22,12 +23,12 @@ class ViewController: UIViewController {
         return textView.text.split(separator: " ").map { "\($0)" }
     }
     
-    var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-"
+    var isEqualAlreadyPressed: Bool {
+        return textView.text.contains("=")
     }
     
-    var expressionContainsPriorityOperators: Bool {
-        return elements.contains("*") || elements.contains("/")
+    var expressionIsCorrect: Bool {
+        return elements.last != "+" && elements.last != "-" && elements.last != "/" && elements.last != "*" && elements.last != ""
     }
     
     var expressionHaveEnoughElement: Bool {
@@ -35,19 +36,30 @@ class ViewController: UIViewController {
     }
     
     var canAddOperator: Bool {
-        return elements.last != "+" && elements.last != "-"
+        return elements.last != "/" && elements.last != "*" && elements.last != "+" && elements.last != "-"
+            && elements.last != "=" && elements.isEmpty == false
     }
     
     var expressionHaveResult: Bool {
         return textView.text.firstIndex(of: "=") != nil
     }
     
+    var checkingDivisionByZeroInExpression: Bool {
+        if elements.contains("/") {
+            if let indexOfDivisionSymbol = elements.firstIndex(of: "/") {
+                if elements[indexOfDivisionSymbol + 1] != "0" {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+        return true
+    }
     
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        guard let numberText = sender.title(for: .normal) else {
-            return
-        }
+        guard let numberText = sender.title(for: .normal) else {return}
         
         if expressionHaveResult {
             textView.text = ""
@@ -58,68 +70,54 @@ class ViewController: UIViewController {
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
         guard let newOperator = sender.title(for: .normal) else {return}
-        if canAddOperator {
+        
+        if canAddOperator && !isEqualAlreadyPressed {
             textView.text.append(" \(newOperator) ")
+        } else {
+            displayAlert(title: "Oups", message: "Soit il vaut mieux commencer par un chiffre, soit un opérateur est déja mis !")
         }
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
+        
         didPressEqual()
     }
     
     @IBAction func tappedClearButton(_ sender: Any) {
-        textView.text = ""
+        clear()
+    }
+    
+    private func clear() {
+        textView.text.removeAll()
     }
     
     private func didPressEqual() {
         
-        guard expressionIsCorrect else { return }
-        
-        guard expressionHaveEnoughElement else { return }
-        
-        calculatorLogic.scavengeData(retrieving: textView.text)
-        
-        var operationsToReduce = elements
-        
-        while operationsToReduce.count > 1 {
-            
-            var result: Double
-            
-            if expressionContainsPriorityOperators {
-                if let index = operationsToReduce.firstIndex (where: { $0 == "*" || $0 == "/" }) {
-                    let priorityResult: Double
-                    let prioritySymbol = operationsToReduce[index]
-                    let leftNumber = operationsToReduce[index - 1]
-                    let rightNumber = operationsToReduce[index + 1]
-                    
-                    if let leftDouble = Double(leftNumber), let rightDouble = Double(rightNumber) {
-                        if prioritySymbol == "*" {
-                            priorityResult = calculatorLogic.multiplyTwoNumbers(multiplying: leftDouble, with: rightDouble)
-                        } else {
-                            priorityResult = calculatorLogic.divideTwoNumbers(dividing: leftDouble, with: rightDouble)
-                        }
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.insert("\(priorityResult)", at: index - 1)
-                    }
-                }
-            }
-            
-            result = calculatorLogic.performOperations(leftNumber: Double(operationsToReduce[0])!,
-                                                       rightNumber: Double(operationsToReduce[2])!,
-                                                       mathSymbol: operationsToReduce[1])
-            
-            operationsToReduce = Array(operationsToReduce.dropFirst(3))
-            operationsToReduce.insert("\(result)", at: 0)
+        guard !isEqualAlreadyPressed else { return
+            displayAlert(title: "Oups", message: "Vous avez déjà appuyé sur égal")
         }
-        textView.text.append(" = \(operationsToReduce.first!)")
+        
+        guard expressionIsCorrect else { return
+            displayAlert(title: "Oups", message: "Votre expression est incorrecte !")
+        }
+        
+        guard expressionHaveEnoughElement else { return
+            displayAlert(title: "Oups", message: "Démarrez un nouveau calcul !")
+        }
+        
+        guard checkingDivisionByZeroInExpression else { return
+            displayAlert(title: "Oups", message: "Vous ne pouvez pas diviser par zéro !")
+        }
+        
+        calculatorLogic.retrieveExpressionToParse(retrieving: textView.text)
+        
+        textView.text.append(" = \(calculatorLogic.parseExpressionAndReturnResult())")
     }
 }
 
-extension UIAlertController {
+extension ViewController {
     
-    func giveAlert(title: String, message: String) {
+    func displayAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         present(alertVC, animated: true, completion: nil)
