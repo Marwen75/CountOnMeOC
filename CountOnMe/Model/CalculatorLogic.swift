@@ -10,108 +10,83 @@ import Foundation
 
 class CalculatorLogic {
     
-    private var text: String = ""
+    private var parser = Parser()
     
-    private var expressionToParse: [String] {
-        return text.split(separator: " ").map { "\($0)" }
-    }
-    
-    private var expressionContainsPriorityOperators: Bool {
-        return expressionToParse.contains("*") || expressionToParse.contains("/")
-    }
-    
-    private func performNonPriorityOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
+    private func performOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
         
         let result: Double
         
         switch mathSymbol {
+        case "*":
+            result = multiply(multiplying: leftNumber, with: rightNumber)
+        case "/":
+            result = divide(dividing: leftNumber, with: rightNumber)
         case "+":
-            result = addTwoNumbers(adding: leftNumber, and: rightNumber)
+            result = add(adding: leftNumber, and: rightNumber)
         case "-":
-            result = substractTwoNumbers(substracting: leftNumber, and: rightNumber)
+            result = substract(substracting: leftNumber, and: rightNumber)
         default:
             fatalError()
         }
         return result
     }
     
-    private func addTwoNumbers(adding leftNumber: Double, and rightNumbert: Double) -> Double {
+    private func add(adding leftNumber: Double, and rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber + rightNumbert
         return result
     }
     
-    private func substractTwoNumbers(substracting leftNumber: Double, and rightNumbert: Double) -> Double {
+    private func substract(substracting leftNumber: Double, and rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber - rightNumbert
         return result
     }
     
-    private func multiplyTwoNumbers(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func multiply(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber * rightNumbert
         return result
     }
     
-    private func divideTwoNumbers(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func divide(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber / rightNumbert
         return result
     }
     
-    func retrieveExpressionToParse(retrieving screenText: String) {
-        text.append(screenText)
+    private func getRidOfLastOperations() {
+        if !parser.numbers.isEmpty && !parser.mathSymbols.isEmpty {
+            parser.numbers.removeAll()
+            parser.expressionToParse.removeAll()
+            parser.mathSymbols.removeAll()
+        }
     }
     
-    func parseExpressionAndReturnResult() -> String {
-        
-        var operationsToReduce = expressionToParse
-        
-        while operationsToReduce.count > 1 {
-            
+    func calculate(from expression: [String]) -> Double {
+        getRidOfLastOperations()
+        parser.expressionToParse += expression
+        parser.parseExpression()
+        var symbols = parser.mathSymbols
+        var numbers = parser.numbers
+        let priorityHandler = PriorityCalculationHandler(mathSymbols: symbols, numbers: numbers)
+        while numbers.count > 1 {
             var result: Double
-            
-            if expressionContainsPriorityOperators {
-                if let index = operationsToReduce.firstIndex (where: { $0 == "*" || $0 == "/" }) {
-                    let priorityResult: Double
-                    let prioritySymbol = operationsToReduce[index]
-                    let leftNumber = operationsToReduce[index - 1]
-                    let rightNumber = operationsToReduce[index + 1]
-                    
-                    if let leftDouble = Double(leftNumber), let rightDouble = Double(rightNumber) {
-                        if prioritySymbol == "*" {
-                            priorityResult = multiplyTwoNumbers(multiplying: leftDouble, with: rightDouble)
-                        } else {
-                            priorityResult = divideTwoNumbers(dividing: leftDouble, with: rightDouble)
-                        }
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.remove(at: index - 1)
-                        operationsToReduce.insert("\(priorityResult)", at: index - 1)
-                    }
+            if symbols.contains("*") || symbols.contains("/") {
+                priorityHandler.handlePriorityOperators()
+                symbols = priorityHandler.mathSymbols
+                numbers = priorityHandler.numbers
+                if numbers.count == 1 {
+                    return numbers[0]
                 }
-            }
-            if operationsToReduce.count == 1 {
-                text.removeAll()
-                return operationsToReduce[0]
             } else {
-                result = performNonPriorityOperations(leftNumber: Double(operationsToReduce[0])!,
-                                                      rightNumber: Double(operationsToReduce[2])!,
-                                                      mathSymbol: operationsToReduce[1])
+                result = performOperations(leftNumber: numbers[0], rightNumber: numbers[1], mathSymbol: symbols[0])
                 
-                operationsToReduce = Array(operationsToReduce.dropFirst(3))
-                operationsToReduce.insert("\(result)", at: 0)
+                symbols.remove(at: 0)
+                numbers = Array(numbers.dropFirst(2))
+                numbers.insert(result, at: 0)
             }
         }
-        text.removeAll()
-        return operationsToReduce[0]
+        return numbers[0]
     }
 }
-
-
-
-
-
-
-
-

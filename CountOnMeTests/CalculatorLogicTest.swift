@@ -10,7 +10,8 @@ import XCTest
 @testable import CountOnMe
 
 class CalculatorLogicTest: XCTestCase {
-    var logic  = CalculatorLogic()
+    
+    var logic = CalculatorLogic()
     
     override func setUp() {
         super.setUp()
@@ -18,62 +19,49 @@ class CalculatorLogicTest: XCTestCase {
     }
     
     func testGivenAnExpressionWithTwoNumbersAndPlusOperator_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeTheSum() {
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 + 10")
         
-        let result = logic.parseExpressionAndReturnResult()
+        let result = logic.calculate(from: ["1", "+", "1"])
         
-        XCTAssertTrue(result == "20.0")
+        XCTAssertTrue(result == 2.0)
     }
     
     func testGivenAnExpressionWithTwoNumbersAndMinusOperator_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeTheDifference() {
-        let _ = logic.retrieveExpressionToParse(retrieving: "12 - 10")
+        let result = logic.calculate(from: ["12", "-", "8"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "2.0")
+        XCTAssertTrue(result == 4.0)
     }
     
     func testGivenAnExpressionWithTwoNumbersAndMultiplicationOperator_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeTheMultiplication() {
         
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 * 10")
+        let result = logic.calculate(from: ["4", "*", "4"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "100.0")
+        XCTAssertTrue(result == 16.0)
         
     }
     
     func testGivenAnExpressionWithTwoNumbersAndMultiplicationOperator_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeTheDivision() {
         
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 / 2")
+        let result = logic.calculate(from: ["12", "/", "2"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "5.0")
+        XCTAssertTrue(result == 6.0)
     }
     
     func testGivenMultipleNumbersWithMultipleOperators_WhenPriorityOperatorMultiplyIsInsideTheOperations_ThenTheResultMustBeCorrect() {
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 + 2 * 3")
+        let result = logic.calculate(from: ["2", "+", "6", "*", "2"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "16.0")
+        XCTAssertTrue(result == 14.0)
     }
     
     func testGivenMultipleNumbersWithMultipleOperators_WhenPriorityOperatorDivideIsInsideTheOperations_ThenTheResultMustBeCorrect() {
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 + 10 / 2")
+        let result = logic.calculate(from: ["10", "+", "12", "/", "2"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "15.0")
+        XCTAssertTrue(result == 16.0)
     }
     
     func testGivenMultipleNumbersWithMultipleOperators_WhenBothPriorityOperatorAreInsideTheOperations_ThenTheResultMustBeCorrect() {
-        let _ = logic.retrieveExpressionToParse(retrieving: "10 + 3 * 2 + 4 / 2")
+        let result = logic.calculate(from: ["10", "+", "2", "*", "3", "-", "14", "/", "2"])
         
-        let result = logic.parseExpressionAndReturnResult()
-        
-        XCTAssertTrue(result == "18.0")
+        XCTAssertTrue(result == 9.0)
     }
 }
 

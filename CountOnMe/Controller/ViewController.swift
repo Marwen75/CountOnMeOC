@@ -60,7 +60,9 @@ class ViewController: UIViewController {
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         guard let numberText = sender.title(for: .normal) else {return}
-        
+        if isEqualAlreadyPressed {
+            textView.text.removeAll()
+        }
         if expressionHaveResult {
             textView.text = ""
         }
@@ -79,7 +81,6 @@ class ViewController: UIViewController {
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        
         didPressEqual()
     }
     
@@ -109,9 +110,7 @@ class ViewController: UIViewController {
             displayAlert(title: "Oups", message: "Vous ne pouvez pas diviser par zéro !")
         }
         
-        calculatorLogic.retrieveExpressionToParse(retrieving: textView.text)
-        
-        textView.text.append(" = \(calculatorLogic.parseExpressionAndReturnResult())")
+        textView.text.append(" = \(calculatorLogic.calculate(from: elements))")
     }
 }
 
