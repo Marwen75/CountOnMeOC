@@ -17,10 +17,6 @@ class CalculatorLogic {
         let result: Double
         
         switch mathSymbol {
-        case "*":
-            result = multiply(multiplying: leftNumber, with: rightNumber)
-        case "/":
-            result = divide(dividing: leftNumber, with: rightNumber)
         case "+":
             result = add(adding: leftNumber, and: rightNumber)
         case "-":
@@ -40,18 +36,6 @@ class CalculatorLogic {
     private func substract(substracting leftNumber: Double, and rightNumbert: Double) -> Double {
         let result: Double
         result = leftNumber - rightNumbert
-        return result
-    }
-    
-    private func multiply(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
-        let result: Double
-        result = leftNumber * rightNumbert
-        return result
-    }
-    
-    private func divide(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
-        let result: Double
-        result = leftNumber / rightNumbert
         return result
     }
     
@@ -79,9 +63,11 @@ class CalculatorLogic {
                 if numbers.count == 1 {
                     return numbers[0]
                 }
-            } else {
-                result = performOperations(leftNumber: numbers[0], rightNumber: numbers[1], mathSymbol: symbols[0])
                 
+            } else {
+                result = performOperations(leftNumber: numbers[0],
+                                           rightNumber: numbers[1],
+                                           mathSymbol: symbols[0])
                 symbols.remove(at: 0)
                 numbers = Array(numbers.dropFirst(2))
                 numbers.insert(result, at: 0)

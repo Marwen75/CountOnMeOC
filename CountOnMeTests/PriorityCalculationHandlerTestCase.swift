@@ -24,6 +24,7 @@ class PriorityManagerTestCase: XCTestCase {
         
         priorityHandler.handlePriorityOperators()
         
+        XCTAssert(priorityHandler.numbers[0] == 12)
         XCTAssert(priorityHandler.numbers[1] == 6)
         XCTAssert(priorityHandler.mathSymbols.count == 1)
     }

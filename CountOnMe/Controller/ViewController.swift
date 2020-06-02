@@ -60,9 +60,7 @@ class ViewController: UIViewController {
     // View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         guard let numberText = sender.title(for: .normal) else {return}
-        if isEqualAlreadyPressed {
-            textView.text.removeAll()
-        }
+        
         if expressionHaveResult {
             textView.text = ""
         }

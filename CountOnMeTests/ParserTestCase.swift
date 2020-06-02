@@ -24,7 +24,7 @@ class ParserTestCase: XCTestCase {
         parser.parseExpression()
         
         XCTAssertTrue(parser.mathSymbols == ["+", "*"])
-        XCTAssert(parser.numbers == [2, 2, 10])
+        XCTAssertTrue(parser.numbers == [2, 2, 10])
         
     }
 }

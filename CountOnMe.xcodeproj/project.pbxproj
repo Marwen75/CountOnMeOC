@@ -16,6 +16,7 @@
 		C241643D247D75890004160E /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241643C247D75890004160E /* Parser.swift */; };
 		C241643F247D75F10004160E /* PriorityCalculationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241643E247D75F10004160E /* PriorityCalculationHandler.swift */; };
 		C2416441247EA46F0004160E /* ParserTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2416440247EA46F0004160E /* ParserTestCase.swift */; };
+		C241644324867B260004160E /* ParserProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C241644224867B260004160E /* ParserProtocol.swift */; };
 		C29EACAA24699B5C00F3B69A /* CalculatorLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29EACA924699B5C00F3B69A /* CalculatorLogic.swift */; };
 		C29EACAC24699D5400F3B69A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C29EACAB24699D5400F3B69A /* Default-568h@2x.png */; };
 		C29EACBC2469A92400F3B69A /* CalculatorLogicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29EACBB2469A92400F3B69A /* CalculatorLogicTest.swift */; };
@@ -43,6 +44,7 @@
 		C241643C247D75890004160E /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		C241643E247D75F10004160E /* PriorityCalculationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityCalculationHandler.swift; sourceTree = "<group>"; };
 		C2416440247EA46F0004160E /* ParserTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserTestCase.swift; sourceTree = "<group>"; };
+		C241644224867B260004160E /* ParserProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParserProtocol.swift; sourceTree = "<group>"; };
 		C29EACA924699B5C00F3B69A /* CalculatorLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorLogic.swift; sourceTree = "<group>"; };
 		C29EACAB24699D5400F3B69A /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C29EACB12469A8F700F3B69A /* CountOnMeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountOnMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +106,7 @@
 			children = (
 				C29EACA924699B5C00F3B69A /* CalculatorLogic.swift */,
 				C241643C247D75890004160E /* Parser.swift */,
+				C241644224867B260004160E /* ParserProtocol.swift */,
 				C241643E247D75F10004160E /* PriorityCalculationHandler.swift */,
 			);
 			path = Model;
@@ -251,6 +254,7 @@
 			files = (
 				C241643D247D75890004160E /* Parser.swift in Sources */,
 				1FA43BD5224E569900F565CB /* ViewController.swift in Sources */,
+				C241644324867B260004160E /* ParserProtocol.swift in Sources */,
 				1FA43BD3224E569900F565CB /* AppDelegate.swift in Sources */,
 				C241643F247D75F10004160E /* PriorityCalculationHandler.swift in Sources */,
 				C29EACAA24699B5C00F3B69A /* CalculatorLogic.swift in Sources */,

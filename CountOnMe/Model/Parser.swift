@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Parser {
+class Parser: ParserProtocol {
 
     var mathSymbols: [String] = []
     var numbers: [Double] = []
@@ -19,9 +19,10 @@ class Parser {
             if i % 2 != 0 {
                 mathSymbols.append(elements)
             } else {
-                numbers.append(Double(elements)!)
+                if let myDouble = Double(elements) {
+                numbers.append(myDouble)
+                }
             }
         }
-        expressionToParse.removeAll()
     }
 } 

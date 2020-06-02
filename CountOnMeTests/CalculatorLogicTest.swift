@@ -25,6 +25,13 @@ class CalculatorLogicTest: XCTestCase {
         XCTAssertTrue(result == 2.0)
     }
     
+    func testGivenAnExpressionWithForNumbersAndNonPriorityOperators_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeCorrect() {
+        
+        let result = logic.calculate(from: ["12", "+", "12", "-", "4"])
+        
+        XCTAssertTrue(result == 20.0)
+    }
+    
     func testGivenAnExpressionWithTwoNumbersAndMinusOperator_WhenTheExpressionIsParsedAndCalculated_ThenTheResultMustBeTheDifference() {
         let result = logic.calculate(from: ["12", "-", "8"])
         
@@ -62,6 +69,20 @@ class CalculatorLogicTest: XCTestCase {
         let result = logic.calculate(from: ["10", "+", "2", "*", "3", "-", "14", "/", "2"])
         
         XCTAssertTrue(result == 9.0)
+    }
+    
+    func testGivenMultipleOperationsWithTheSamePriorityOperator_WhenTheCalculIsMade_ThenThePriorityMustBeRespected() {
+        let result = logic.calculate(from: ["2", "*", "2", "+", "2", "*","4"])
+        
+        XCTAssertTrue(result == 12.0)
+    }
+    
+    func testGivenAPreviousOperationInTheArray_WhenANewCalculBegins_ThenTheArrayMustBeEmptiedAndRefillWithNewCalculation() {
+        _ = logic.calculate(from: ["2", "*", "2", "+", "2", "*","4"])
+        
+        let newOperationResult = logic.calculate(from: ["10", "+", "2", "*", "3", "-", "14", "/", "2"])
+        
+        XCTAssertTrue(newOperationResult == 9.0)
     }
 }
 
