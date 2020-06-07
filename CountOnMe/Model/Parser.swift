@@ -9,12 +9,14 @@
 import Foundation
 
 class Parser: ParserProtocol {
-
-    var mathSymbols: [String] = []
-    var numbers: [Double] = []
-    var expressionToParse: [String] = []
     
-    func parseExpression() {
+        
+    func parseExpression(parsing expression: String) -> ([String], [Double]) {
+        
+        let expressionToParse: [String] = expression.split(separator: " ").map { "\($0)" }
+        var mathSymbols: [String] = []
+        var numbers: [Double] = []
+
         expressionToParse.enumerated().forEach { (i, elements) in
             if i % 2 != 0 {
                 mathSymbols.append(elements)
@@ -24,5 +26,6 @@ class Parser: ParserProtocol {
                 }
             }
         }
+        return (mathSymbols, numbers)
     }
 } 

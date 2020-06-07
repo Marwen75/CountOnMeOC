@@ -108,7 +108,7 @@ class ViewController: UIViewController {
             displayAlert(title: "Oups", message: "Vous ne pouvez pas diviser par zéro !")
         }
         
-        textView.text.append(" = \(calculatorLogic.calculate(from: elements))")
+        textView.text.append(" = \(calculatorLogic.calculate(from: textView.text))")
     }
 }
 

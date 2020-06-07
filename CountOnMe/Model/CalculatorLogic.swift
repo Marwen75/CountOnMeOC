@@ -10,13 +10,18 @@ import Foundation
 
 class CalculatorLogic {
     
-    private var parser = Parser()
+    let parser = Parser()
+    let priorityHandler = PriorityCalculationHandler()
     
     private func performOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
         
         let result: Double
         
         switch mathSymbol {
+        case "*":
+            result = multiply(multiplying: leftNumber, with: rightNumber)
+        case "/":
+            result = divide(dividing: leftNumber, with: rightNumber)
         case "+":
             result = add(adding: leftNumber, and: rightNumber)
         case "-":
@@ -39,39 +44,46 @@ class CalculatorLogic {
         return result
     }
     
-    private func getRidOfLastOperations() {
-        if !parser.numbers.isEmpty && !parser.mathSymbols.isEmpty {
-            parser.numbers.removeAll()
-            parser.expressionToParse.removeAll()
-            parser.mathSymbols.removeAll()
-        }
+    private func multiply(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
+        let result: Double
+        result = leftNumber * rightNumbert
+        return result
     }
     
-    func calculate(from expression: [String]) -> Double {
-        getRidOfLastOperations()
-        parser.expressionToParse += expression
-        parser.parseExpression()
-        var symbols = parser.mathSymbols
-        var numbers = parser.numbers
-        let priorityHandler = PriorityCalculationHandler(mathSymbols: symbols, numbers: numbers)
+    private func divide(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
+        let result: Double
+        result = leftNumber / rightNumbert
+        return result
+    }
+    
+    func calculate(from expression: String) -> Double {
+        var priorityResult: Double
+        var result: Double
+        var (symbols, numbers) = parser.parseExpression(parsing: expression)
+        priorityHandler.handlePriorityOperators(prioritySymbols: &symbols, priorityNumbers: &numbers)
+        
+        while symbols.contains("*") || symbols.contains("/") {
+            
+            priorityResult = performOperations(leftNumber: numbers[0], rightNumber: numbers[1], mathSymbol: symbols[0])
+            
+            symbols.remove(at: 0)
+            numbers = Array(numbers.dropFirst(2))
+            numbers.append(priorityResult)
+           // if symbols.contains("+") || symbols.contains("-") {
+              //  if let goodIndex = symbols.lastIndex (where: { $0 == "*" ||  $0 == "/" }) {
+                  //  numbers.insert(priorityResult, at: goodIndex)
+                   // numbers.removeLast()
+              //  }
+           // }
+        }
         while numbers.count > 1 {
-            var result: Double
-            if symbols.contains("*") || symbols.contains("/") {
-                priorityHandler.handlePriorityOperators()
-                symbols = priorityHandler.mathSymbols
-                numbers = priorityHandler.numbers
-                if numbers.count == 1 {
-                    return numbers[0]
-                }
-                
-            } else {
-                result = performOperations(leftNumber: numbers[0],
-                                           rightNumber: numbers[1],
-                                           mathSymbol: symbols[0])
-                symbols.remove(at: 0)
-                numbers = Array(numbers.dropFirst(2))
-                numbers.insert(result, at: 0)
-            }
+            
+            result = performOperations(leftNumber: numbers[0],
+                                       rightNumber: numbers[1],
+                                       mathSymbol: symbols[0])
+            symbols.remove(at: 0)
+            numbers = Array(numbers.dropFirst(2))
+            numbers.insert(result, at: 0)
         }
         return numbers[0]
     }

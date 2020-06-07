@@ -10,9 +10,5 @@ import Foundation
 
 protocol ParserProtocol {
     
-    var mathSymbols: [String] { get }
-    var numbers: [Double] { get }
-    var expressionToParse: [String] { get }
-    
-    func parseExpression() -> ()
+    func parseExpression(parsing expression: String) -> ([String], [Double])
 }
