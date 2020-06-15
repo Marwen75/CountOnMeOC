@@ -11,26 +11,6 @@ import Foundation
 class CalculatorLogic {
     
     let parser = Parser()
-    let priorityHandler = PriorityCalculationHandler()
-    
-    private func performOperations(leftNumber: Double, rightNumber: Double, mathSymbol: String) -> Double {
-        
-        let result: Double
-        
-        switch mathSymbol {
-        case "*":
-            result = multiply(multiplying: leftNumber, with: rightNumber)
-        case "/":
-            result = divide(dividing: leftNumber, with: rightNumber)
-        case "+":
-            result = add(adding: leftNumber, and: rightNumber)
-        case "-":
-            result = substract(substracting: leftNumber, and: rightNumber)
-        default:
-            fatalError()
-        }
-        return result
-    }
     
     private func add(adding leftNumber: Double, and rightNumbert: Double) -> Double {
         let result: Double
@@ -56,31 +36,43 @@ class CalculatorLogic {
         return result
     }
     
-    func calculate(from expression: String) -> Double {
-        var priorityResult: Double
-        var result: Double
-        var (symbols, numbers) = parser.parseExpression(parsing: expression)
-        priorityHandler.handlePriorityOperators(prioritySymbols: &symbols, priorityNumbers: &numbers)
+    private func handlePriorityOperations(symbols: inout [String], numbers: inout [Double]) {
         
         while symbols.contains("*") || symbols.contains("/") {
             
-            priorityResult = performOperations(leftNumber: numbers[0], rightNumber: numbers[1], mathSymbol: symbols[0])
-            
-            symbols.remove(at: 0)
-            numbers = Array(numbers.dropFirst(2))
-            numbers.append(priorityResult)
-           // if symbols.contains("+") || symbols.contains("-") {
-              //  if let goodIndex = symbols.lastIndex (where: { $0 == "*" ||  $0 == "/" }) {
-                  //  numbers.insert(priorityResult, at: goodIndex)
-                   // numbers.removeLast()
-              //  }
-           // }
+            if let i = symbols.firstIndex(where: {$0 == "*" || $0 == "/"}) {
+                
+                let priorityResult: Double
+                let prioritySymbol = symbols[i]
+                let leftNumber = numbers[i]
+                let rightNumber = numbers[i + 1]
+                
+                if prioritySymbol == "*" {
+                    priorityResult = multiply(multiplying: leftNumber, with: rightNumber)
+                } else {
+                    priorityResult = divide(dividing: leftNumber, with: rightNumber)
+                }
+                symbols.remove(at: i)
+                numbers.remove(at: i)
+                numbers.remove(at: i)
+                numbers.insert(priorityResult, at: i)
+            }
         }
+    }
+    
+    func calculate(from expression: String) -> Double {
+        
+        var result: Double
+        var (symbols, numbers) = parser.parseExpression(parsing: expression)
+        handlePriorityOperations(symbols: &symbols, numbers: &numbers)
+        
         while numbers.count > 1 {
             
-            result = performOperations(leftNumber: numbers[0],
-                                       rightNumber: numbers[1],
-                                       mathSymbol: symbols[0])
+            if symbols[0] == "+" {
+                result = add(adding: numbers[0], and: numbers[1])
+            } else {
+                result = substract(substracting: numbers[0], and: numbers[1])
+            }
             symbols.remove(at: 0)
             numbers = Array(numbers.dropFirst(2))
             numbers.insert(result, at: 0)

@@ -17,44 +17,18 @@ class ViewController: UIViewController {
     // View Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    var elements: [String] {
-        return textView.text.split(separator: " ").map { "\($0)" }
+        calculatorLogic.parser.alertDisplayer = { [weak self] title, message in
+            guard let strongSelf = self else { return }
+            strongSelf.displayAlert(title: title, message: message)
+        }
     }
     
     var isEqualAlreadyPressed: Bool {
         return textView.text.contains("=")
     }
     
-    var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-" && elements.last != "/" && elements.last != "*" && elements.last != ""
-    }
-    
-    var expressionHaveEnoughElement: Bool {
-        return elements.count >= 3
-    }
-    
-    var canAddOperator: Bool {
-        return elements.last != "/" && elements.last != "*" && elements.last != "+" && elements.last != "-"
-            && elements.last != "=" && elements.isEmpty == false
-    }
-    
     var expressionHaveResult: Bool {
         return textView.text.firstIndex(of: "=") != nil
-    }
-    
-    var checkingDivisionByZeroInExpression: Bool {
-        if elements.contains("/") {
-            if let indexOfDivisionSymbol = elements.firstIndex(of: "/") {
-                if elements[indexOfDivisionSymbol + 1] != "0" {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-        return true
     }
     
     // View actions
@@ -64,30 +38,20 @@ class ViewController: UIViewController {
         if expressionHaveResult {
             textView.text = ""
         }
-        
         textView.text.append(numberText)
     }
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
         guard let newOperator = sender.title(for: .normal) else {return}
-        
-        if canAddOperator && !isEqualAlreadyPressed {
+        if !isEqualAlreadyPressed {
             textView.text.append(" \(newOperator) ")
         } else {
-            displayAlert(title: "Oups", message: "Soit il vaut mieux commencer par un chiffre, soit un opérateur est déja mis !")
+            displayAlert(title: "Oups", message: "blablabla")
         }
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         didPressEqual()
-    }
-    
-    @IBAction func tappedClearButton(_ sender: Any) {
-        clear()
-    }
-    
-    private func clear() {
-        textView.text.removeAll()
     }
     
     private func didPressEqual() {
@@ -96,19 +60,11 @@ class ViewController: UIViewController {
             displayAlert(title: "Oups", message: "Vous avez déjà appuyé sur égal")
         }
         
-        guard expressionIsCorrect else { return
-            displayAlert(title: "Oups", message: "Votre expression est incorrecte !")
-        }
-        
-        guard expressionHaveEnoughElement else { return
-            displayAlert(title: "Oups", message: "Démarrez un nouveau calcul !")
-        }
-        
-        guard checkingDivisionByZeroInExpression else { return
-            displayAlert(title: "Oups", message: "Vous ne pouvez pas diviser par zéro !")
-        }
-        
         textView.text.append(" = \(calculatorLogic.calculate(from: textView.text))")
+    }
+    
+    @IBAction func tappedClearButton(_ sender: Any) {
+        textView.text.removeAll()
     }
 }
 

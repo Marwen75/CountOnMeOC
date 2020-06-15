@@ -17,14 +17,39 @@ class ParserTestCase: XCTestCase {
         parser = Parser()
     }
     
-    func testGivenAnExpressionInAnArrayOfString_WhenTheExpressionIsParsed_ThenItMustBeSeparatedInTwoArraysOneArrayOfStringAndOneArrayOfDouble() {
+    func testGivenAnExpressionInString_WhenTheExpressionIsParsed_ThenItMustBeSeparatedInTwoArraysOneArrayOfStringAndOneArrayOfDouble() {
         
-        parser.expressionToParse += ["2", "+", "2", "*", "10"]
+        let testTuple = parser.parseExpression(parsing: "2 + 2 * 10")
         
-        parser.parseExpression()
+        XCTAssertTrue(testTuple == (["+", "*"], [2, 2, 10]))
         
-        XCTAssertTrue(parser.mathSymbols == ["+", "*"])
-        XCTAssertTrue(parser.numbers == [2, 2, 10])
+    }
+    
+    func testGivenAnExpressionInStringThatBeginsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
         
+        let testTuple = parser.parseExpression(parsing: "+ 2 + 2")
+        
+        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+    }
+    
+    func testGivenAnExpressionInStringWithOnlyTwoElements_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+        
+        let testTuple = parser.parseExpression(parsing: "2 +")
+        
+        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+    }
+    
+    func testGivenAnExpressionWithADivisionByZero_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+        
+        let testTuple = parser.parseExpression(parsing: "2 + 2 + 2 / 0")
+        
+        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+    }
+    
+    func testGivenAnExpressionThatEndsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+        
+        let testTuple = parser.parseExpression(parsing: "2 * 4 / 2 +")
+        
+        XCTAssertTrue(testTuple == (["+"], [0, 0]))
     }
 }
