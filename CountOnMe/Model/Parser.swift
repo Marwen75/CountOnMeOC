@@ -11,6 +11,7 @@ import Foundation
 class Parser: ParserProtocol {
     
     var alertDisplayer: ((_ title: String, _ message: String) -> Void)?
+    var cleaner: (() -> Void)?
     
     private enum SynthaxError: Error {
         case notEnoughElementsInExpression
@@ -71,18 +72,23 @@ class Parser: ParserProtocol {
             try checkForError(elements: expressionToParse)
         } catch SynthaxError.notEnoughElementsInExpression {
             alertDisplayer?("Oups", "Votre expression est incorrecte")
+            cleaner?()
             return (["+"], [0, 0])
         } catch SynthaxError.operatorAtTheEndOfExpression {
             alertDisplayer?("Oups", "Votre expression est incorrecte")
+            cleaner?()
             return (["+"], [0, 0])
         }  catch SynthaxError.divisionByzero {
             alertDisplayer?("Oups", "On ne peut pas diviser par zéro")
+            cleaner?()
             return (["+"], [0, 0])
         } catch SynthaxError.operationBeginsWithOperator {
             alertDisplayer?("Oups", "Veuillez commencer par un chiffre")
+            cleaner?()
             return (["+"], [0, 0])
         } catch {
             alertDisplayer?("Oups", "Une erreur est survenue")
+            cleaner?()
             return (["+"], [0, 0])
         }
         var mathSymbols: [String] = []

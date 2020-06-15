@@ -21,6 +21,10 @@ class ViewController: UIViewController {
             guard let strongSelf = self else { return }
             strongSelf.displayAlert(title: title, message: message)
         }
+        calculatorLogic.parser.cleaner = { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.clear()
+        }
     }
     
     var isEqualAlreadyPressed: Bool {
@@ -64,6 +68,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func tappedClearButton(_ sender: Any) {
+        clear()
+    }
+    
+    private func clear() {
         textView.text.removeAll()
     }
 }
