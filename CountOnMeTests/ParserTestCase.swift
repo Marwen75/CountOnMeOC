@@ -12,44 +12,83 @@ import XCTest
 class ParserTestCase: XCTestCase {
     
     var parser = Parser()
-
+    
     override func setUp() {
         parser = Parser()
     }
     
-    func testGivenAnExpressionInString_WhenTheExpressionIsParsed_ThenItMustBeSeparatedInTwoArraysOneArrayOfStringAndOneArrayOfDouble() {
+    func testGivenAnExpressionInString_WhenTheExpressionIsParsed_ThenItMustBeSeparatedInTwoArraysOneArrayOfStringAndOneArrayOfDouble() throws {
         
-        let testTuple = parser.parseExpression(parsing: "2 + 2 * 10")
+        guard let testTuple = try? parser.parseExpression(parsing: "2 + 2 * 10") else { return }
         
         XCTAssertTrue(testTuple == (["+", "*"], [2, 2, 10]))
         
     }
     
-    func testGivenAnExpressionInStringThatBeginsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+    func testGivenAnExpressionInStringThatBeginsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.operationBeginsWithOperator
+        var error: CalculatorError?
         
-        let testTuple = parser.parseExpression(parsing: "+ 2 + 2")
+        XCTAssertThrowsError(try parser.parseExpression(parsing: "+ 2 + 2")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
         
-        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+        XCTAssertTrue(expectedError.errorDescription == "Oups !")
+        
+        XCTAssertTrue(expectedError.failureReason == "Il vaut mieux commencer par un chiffre.")
+        
+        XCTAssertEqual(expectedError, error)
     }
     
-    func testGivenAnExpressionInStringWithOnlyTwoElements_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+    func testGivenAnExpressionInStringWithOnlyTwoElements_WhenTheExpressionIsParsed_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.incorrectExpression
+        var error: CalculatorError?
         
-        let testTuple = parser.parseExpression(parsing: "2 +")
+        XCTAssertThrowsError(try parser.parseExpression(parsing: "2 +")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
         
-        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+        XCTAssertTrue(expectedError.failureReason == "Votre expression est incorrecte.")
+        
+        XCTAssertEqual(expectedError, error)
     }
     
-    func testGivenAnExpressionWithADivisionByZero_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+    func testGivenAnExpressionThatEndsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.incorrectExpression
+        var error: CalculatorError?
         
-        let testTuple = parser.parseExpression(parsing: "2 + 2 + 2 / 0")
+        XCTAssertThrowsError(try parser.parseExpression(parsing: "2 + 2 +")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
         
-        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+        XCTAssertTrue(expectedError.failureReason == "Votre expression est incorrecte.")
+        
+        XCTAssertEqual(expectedError, error)
     }
     
-    func testGivenAnExpressionThatEndsWithAnOperator_WhenTheExpressionIsParsed_ThenTheErrorMustBeCatched() {
+    func testGivenAnExpressionWithTooMuchMathSymbols_WhenTheExpressionIsParsedAndThereIsTooMuchSymbols_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.incorrectExpression
+        var error: CalculatorError?
         
-        let testTuple = parser.parseExpression(parsing: "2 * 4 / 2 +")
+        XCTAssertThrowsError(try parser.parseExpression(parsing: "2 + 2 + + + 2")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
         
-        XCTAssertTrue(testTuple == (["+"], [0, 0]))
+        XCTAssertTrue(expectedError.failureReason == "Votre expression est incorrecte.")
+        
+        XCTAssertEqual(expectedError, error)
+    }
+    
+    func testGivenAnExpressionButEqualWasAlreadyPressed_WhenTheExpressionIsParsedAndAndEqualIsFound_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.equalIsAlreadyPressed
+        var error: CalculatorError?
+        
+        XCTAssertThrowsError(try parser.parseExpression(parsing: "2 + 2 + 2 = 6")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
+        
+        XCTAssertTrue(expectedError.failureReason == "Vous avez déja appuyé sur égal veuillez commencer un nouveau calcul.")
+        
+        XCTAssertEqual(expectedError, error)
     }
 }

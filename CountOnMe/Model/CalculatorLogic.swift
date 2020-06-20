@@ -10,33 +10,40 @@ import Foundation
 
 class CalculatorLogic {
     
-    let parser = Parser()
+    let parser: ParserProtocol
     
-    private func add(adding leftNumber: Double, and rightNumbert: Double) -> Double {
+    init(parser: ParserProtocol) {
+        self.parser = parser
+    }
+    
+    private func add(adding leftNumber: Double, and rightNumber: Double) -> Double {
         let result: Double
-        result = leftNumber + rightNumbert
+        result = leftNumber + rightNumber
         return result
     }
     
-    private func substract(substracting leftNumber: Double, and rightNumbert: Double) -> Double {
+    private func substract(substracting leftNumber: Double, and rightNumber: Double) -> Double {
         let result: Double
-        result = leftNumber - rightNumbert
+        result = leftNumber - rightNumber
         return result
     }
     
-    private func multiply(multiplying leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func multiply(multiplying leftNumber: Double, with rightNumber: Double) -> Double {
         let result: Double
-        result = leftNumber * rightNumbert
+        result = leftNumber * rightNumber
         return result
     }
     
-    private func divide(dividing leftNumber: Double, with rightNumbert: Double) -> Double {
+    private func divide(dividing leftNumber: Double, with rightNumber: Double) throws -> Double {
         let result: Double
-        result = leftNumber / rightNumbert
+        if rightNumber == 0 {
+            throw CalculatorError.divisionByZero
+        }
+        result = leftNumber / rightNumber
         return result
     }
     
-    private func handlePriorityOperations(symbols: inout [String], numbers: inout [Double]) {
+    private func handlePriorityOperations(symbols: inout [String], numbers: inout [Double]) throws {
         
         while symbols.contains("*") || symbols.contains("/") {
             
@@ -50,7 +57,7 @@ class CalculatorLogic {
                 if prioritySymbol == "*" {
                     priorityResult = multiply(multiplying: leftNumber, with: rightNumber)
                 } else {
-                    priorityResult = divide(dividing: leftNumber, with: rightNumber)
+                    priorityResult = try divide(dividing: leftNumber, with: rightNumber)
                 }
                 symbols.remove(at: i)
                 numbers.remove(at: i)
@@ -60,11 +67,11 @@ class CalculatorLogic {
         }
     }
     
-    func calculate(from expression: String) -> Double {
+    func calculate(from expression: String) throws -> Double {
         
         var result: Double
-        var (symbols, numbers) = parser.parseExpression(parsing: expression)
-        handlePriorityOperations(symbols: &symbols, numbers: &numbers)
+        var (symbols, numbers) = try parser.parseExpression(parsing: expression)
+        try handlePriorityOperations(symbols: &symbols, numbers: &numbers)
         
         while numbers.count > 1 {
             

@@ -12,23 +12,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
     
-    var calculatorLogic = CalculatorLogic()
+    var calculatorLogic = CalculatorLogic(parser: Parser())
     
     // View Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        calculatorLogic.parser.alertDisplayer = { [weak self] title, message in
-            guard let strongSelf = self else { return }
-            strongSelf.displayAlert(title: title, message: message)
-        }
-        calculatorLogic.parser.cleaner = { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.clear()
-        }
-    }
-    
-    var isEqualAlreadyPressed: Bool {
-        return textView.text.contains("=")
     }
     
     var expressionHaveResult: Bool {
@@ -47,12 +35,12 @@ class ViewController: UIViewController {
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
         guard let newOperator = sender.title(for: .normal) else {return}
-        if !isEqualAlreadyPressed {
             textView.text.append(" \(newOperator) ")
-        } else {
-            displayAlert(title: "Oups", message: "blablabla")
-        }
     }
+    
+    @IBAction func tappedClearButton(_ sender: Any) {
+          textView.text.removeAll()
+      }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         didPressEqual()
@@ -60,19 +48,15 @@ class ViewController: UIViewController {
     
     private func didPressEqual() {
         
-        guard !isEqualAlreadyPressed else { return
-            displayAlert(title: "Oups", message: "Vous avez déjà appuyé sur égal")
+        do {
+            let result = try calculatorLogic.calculate(from: textView.text)
+            textView.text.append(" = \(result)")
+        } catch let error as LocalizedError {
+            displayAlert(title: error.errorDescription!, message: error.failureReason!)
+            textView.text.removeAll()
+        } catch {
+            displayAlert(title: "Oups", message: "Une erreur est survenue ")
         }
-        
-        textView.text.append(" = \(calculatorLogic.calculate(from: textView.text))")
-    }
-    
-    @IBAction func tappedClearButton(_ sender: Any) {
-        clear()
-    }
-    
-    private func clear() {
-        textView.text.removeAll()
     }
 }
 

@@ -10,33 +10,18 @@ import Foundation
 
 class Parser: ParserProtocol {
     
-    var alertDisplayer: ((_ title: String, _ message: String) -> Void)?
-    var cleaner: (() -> Void)?
-    
-    private enum SynthaxError: Error {
-        case notEnoughElementsInExpression
-        case operatorAtTheEndOfExpression
-        case divisionByzero
-        case twoOperators
-        case operationBeginsWithOperator
-    }
-    
-    private func checkingDivisionByZeroInExpression(elements: [String]) -> Bool {
-        if elements.contains("/") {
-            if let indexOfDivisionSymbol = elements.firstIndex(of: "/") {
-                if elements[indexOfDivisionSymbol + 1] == "0" {
-                    return false
-                }
-            }
+    private func checkForExtraSymbols(inside matshSymbols: [String], and numbers: [Double]) -> Bool {
+        if matshSymbols.count >= numbers.count {
+            return true
         }
-        return true
+        return false
     }
     
     private func expressionIsCorrect(elements: [String]) -> Bool {
         if elements.last == "+" || elements.last == "-" || elements.last == "/" || elements.last == "*" || elements.last == "" {
             return false
         }
-        return true
+            return true
     }
     
     private func expressionHaveEnoughElement(elements: [String]) -> Bool {
@@ -53,44 +38,27 @@ class Parser: ParserProtocol {
         return false
     }
     
-    private func checkForError(elements: [String]) throws {
-        if !expressionHaveEnoughElement(elements: elements) {
-            throw SynthaxError.notEnoughElementsInExpression
-        } else if !expressionIsCorrect(elements: elements) {
-            throw SynthaxError.operatorAtTheEndOfExpression
-        } else if !checkingDivisionByZeroInExpression(elements: elements) {
-            throw SynthaxError.divisionByzero
-        } else if expressionBeginWithOperator(elements: elements) {
-            throw SynthaxError.operationBeginsWithOperator
+    private func isEqualAlreadyPressed(elements: [String]) -> Bool {
+        if elements.contains("=") {
+            return true
         }
+        return false 
     }
     
-    func parseExpression(parsing expression: String) -> ([String], [Double]) {
+    func parseExpression(parsing expression: String) throws -> ([String], [Double]) {
         
         let expressionToParse: [String] = expression.split(separator: " ").map { "\($0)" }
-        do {
-            try checkForError(elements: expressionToParse)
-        } catch SynthaxError.notEnoughElementsInExpression {
-            alertDisplayer?("Oups", "Votre expression est incorrecte")
-            cleaner?()
-            return (["+"], [0, 0])
-        } catch SynthaxError.operatorAtTheEndOfExpression {
-            alertDisplayer?("Oups", "Votre expression est incorrecte")
-            cleaner?()
-            return (["+"], [0, 0])
-        }  catch SynthaxError.divisionByzero {
-            alertDisplayer?("Oups", "On ne peut pas diviser par zéro")
-            cleaner?()
-            return (["+"], [0, 0])
-        } catch SynthaxError.operationBeginsWithOperator {
-            alertDisplayer?("Oups", "Veuillez commencer par un chiffre")
-            cleaner?()
-            return (["+"], [0, 0])
-        } catch {
-            alertDisplayer?("Oups", "Une erreur est survenue")
-            cleaner?()
-            return (["+"], [0, 0])
+        
+        if !expressionHaveEnoughElement(elements: expressionToParse) {
+            throw CalculatorError.incorrectExpression
+        } else if !expressionIsCorrect(elements: expressionToParse) {
+            throw CalculatorError.incorrectExpression
+        } else if expressionBeginWithOperator(elements: expressionToParse) {
+            throw CalculatorError.operationBeginsWithOperator
+        } else if isEqualAlreadyPressed(elements: expressionToParse) {
+            throw CalculatorError.equalIsAlreadyPressed
         }
+        
         var mathSymbols: [String] = []
         var numbers: [Double] = []
         
@@ -103,6 +71,9 @@ class Parser: ParserProtocol {
                 }
             }
         }
+        if checkForExtraSymbols(inside: mathSymbols, and: numbers) {
+            throw CalculatorError.incorrectExpression
+        }
         return (mathSymbols, numbers)
     }
-} 
+}

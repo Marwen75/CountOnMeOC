@@ -10,5 +10,5 @@ import Foundation
 
 protocol ParserProtocol {
     
-    func parseExpression(parsing expression: String) -> ([String], [Double])
+    func parseExpression(parsing expression: String) throws -> ([String], [Double])
 }
