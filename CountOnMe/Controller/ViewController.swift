@@ -9,21 +9,23 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    // MARK: - Outlets
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
     
-    var calculatorLogic = CalculatorLogic(parser: Parser())
+    // MARK: - Properties
+    private var calculatorLogic = CalculatorLogic(parser: Parser())
+    private var expressionHaveResult: Bool {
+           return textView.text.firstIndex(of: "=") != nil
+       }
     
-    // View Life cycles
+    // MARK: - View Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    var expressionHaveResult: Bool {
-        return textView.text.firstIndex(of: "=") != nil
-    }
-    
-    // View actions
+    // MARK: - View actions
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         guard let numberText = sender.title(for: .normal) else {return}
         
@@ -35,17 +37,22 @@ class ViewController: UIViewController {
     
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
         guard let newOperator = sender.title(for: .normal) else {return}
-            textView.text.append(" \(newOperator) ")
+        
+        if expressionHaveResult {
+            textView.text = "" 
+        }
+        textView.text.append(" \(newOperator) ")
     }
     
     @IBAction func tappedClearButton(_ sender: Any) {
-          textView.text.removeAll()
-      }
+        textView.text.removeAll()
+    }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         didPressEqual()
     }
     
+    // MARK: - Methods
     private func didPressEqual() {
         
         do {
@@ -60,6 +67,7 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: - Extensions
 extension ViewController {
     
     func displayAlert(title: String, message: String) {

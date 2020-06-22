@@ -8,8 +8,10 @@
 
 import Foundation
 
+// This object will parse the data from the screen, put them in two arrays and will also throw synthax errors
+
 class Parser: ParserProtocol {
-    
+    // MARK: - Methods
     private func checkForExtraSymbols(inside matshSymbols: [String], and numbers: [Double]) -> Bool {
         if matshSymbols.count >= numbers.count {
             return true

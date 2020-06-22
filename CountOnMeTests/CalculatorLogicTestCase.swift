@@ -108,8 +108,21 @@ class CalculatorLogicTestCase: XCTestCase {
         XCTAssertThrowsError(try logic.calculate(from: "14 + 3 / 0")) { thrownError in
             error = thrownError as? CalculatorError
         }
-
+        
         XCTAssertTrue(expectedError.failureReason == "La division par zéro est impossible.")
+        
+        XCTAssertEqual(expectedError, error)
+    }
+    
+    func testGivenAnExpressionWithAnUnknownOperator_WhenTheOperationIsMade_ThenTheErrorMustBeThrowned() throws {
+        let expectedError = CalculatorError.unKnownOperator
+        var error: CalculatorError?
+        
+        XCTAssertThrowsError(try logic.calculate(from: "14 _ 3")) { thrownError in
+            error = thrownError as? CalculatorError
+        }
+        
+        XCTAssertTrue(expectedError.failureReason == "Opérateur inconnu.")
         
         XCTAssertEqual(expectedError, error)
     }

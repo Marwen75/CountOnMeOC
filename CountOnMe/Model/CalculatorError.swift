@@ -8,11 +8,14 @@
 
 import Foundation
 
+// This object lists all possible errors, it inherits from the LocalizedError Protocol 
+
 enum CalculatorError: LocalizedError {
     case incorrectExpression
     case operationBeginsWithOperator
     case divisionByZero
     case equalIsAlreadyPressed
+    case unKnownOperator
 
     var errorDescription: String? {
        return "Oups !"
@@ -27,6 +30,8 @@ enum CalculatorError: LocalizedError {
             return "Il vaut mieux commencer par un chiffre."
         case .equalIsAlreadyPressed:
             return "Vous avez déja appuyé sur égal veuillez commencer un nouveau calcul."
+        case .unKnownOperator:
+            return "Opérateur inconnu."
         }
     }
 }

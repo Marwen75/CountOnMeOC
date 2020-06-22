@@ -8,12 +8,29 @@
 
 import Foundation
 
+// This object will do all the math logic: Calculate and handle priority operations
+
 class CalculatorLogic {
-    
+    // MARK: - Properties
     let parser: ParserProtocol
     
     init(parser: ParserProtocol) {
         self.parser = parser
+    }
+    // MARK: - Methods
+    private func performOperations(mathSymbol: String, leftNumber: Double, rightNumber: Double) throws -> Double {
+        switch mathSymbol {
+        case "*":
+            return multiply(multiplying: leftNumber, with: rightNumber)
+        case "/":
+            return try divide(dividing: leftNumber, with: rightNumber)
+        case "+":
+            return add(adding: leftNumber, and: rightNumber)
+        case"-":
+            return substract(substracting: leftNumber, and: rightNumber)
+        default:
+            throw CalculatorError.unKnownOperator
+        }
     }
     
     private func add(adding leftNumber: Double, and rightNumber: Double) -> Double {
@@ -55,9 +72,9 @@ class CalculatorLogic {
                 let rightNumber = numbers[i + 1]
                 
                 if prioritySymbol == "*" {
-                    priorityResult = multiply(multiplying: leftNumber, with: rightNumber)
+                    priorityResult = try performOperations(mathSymbol: prioritySymbol, leftNumber: leftNumber, rightNumber: rightNumber)
                 } else {
-                    priorityResult = try divide(dividing: leftNumber, with: rightNumber)
+                    priorityResult = try performOperations(mathSymbol: prioritySymbol, leftNumber: leftNumber, rightNumber: rightNumber)
                 }
                 symbols.remove(at: i)
                 numbers.remove(at: i)
@@ -75,11 +92,8 @@ class CalculatorLogic {
         
         while numbers.count > 1 {
             
-            if symbols[0] == "+" {
-                result = add(adding: numbers[0], and: numbers[1])
-            } else {
-                result = substract(substracting: numbers[0], and: numbers[1])
-            }
+            result = try performOperations(mathSymbol: symbols[0], leftNumber: numbers[0], rightNumber: numbers[1])
+            
             symbols.remove(at: 0)
             numbers = Array(numbers.dropFirst(2))
             numbers.insert(result, at: 0)
