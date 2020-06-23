@@ -71,11 +71,8 @@ class CalculatorLogic {
                 let leftNumber = numbers[i]
                 let rightNumber = numbers[i + 1]
                 
-                if prioritySymbol == "*" {
                     priorityResult = try performOperations(mathSymbol: prioritySymbol, leftNumber: leftNumber, rightNumber: rightNumber)
-                } else {
-                    priorityResult = try performOperations(mathSymbol: prioritySymbol, leftNumber: leftNumber, rightNumber: rightNumber)
-                }
+                
                 symbols.remove(at: i)
                 numbers.remove(at: i)
                 numbers.remove(at: i)

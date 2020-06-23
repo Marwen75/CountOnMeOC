@@ -58,7 +58,7 @@ class ViewController: UIViewController {
         do {
             let result = try calculatorLogic.calculate(from: textView.text)
             textView.text.append(" = \(result)")
-        } catch let error as LocalizedError {
+        } catch let error as CalculatorError {
             displayAlert(title: error.errorDescription!, message: error.failureReason!)
             textView.text.removeAll()
         } catch {

@@ -11,15 +11,21 @@ import XCTest
 
 class ParserTestCase: XCTestCase {
     
-    var parser = Parser()
+    var parser: Parser!
     
     override func setUp() {
+        super.setUp()
         parser = Parser()
     }
     
+    override func tearDown() {
+        parser = nil
+        super.tearDown()
+    }
+    // MARK: - TESTS
     func testGivenAnExpressionInString_WhenTheExpressionIsParsed_ThenItMustBeSeparatedInTwoArraysOneArrayOfStringAndOneArrayOfDouble() throws {
         
-        guard let testTuple = try? parser.parseExpression(parsing: "2 + 2 * 10") else { return }
+        let testTuple = try parser.parseExpression(parsing: "2 + 2 * 10") 
         
         XCTAssertTrue(testTuple == (["+", "*"], [2, 2, 10]))
         
