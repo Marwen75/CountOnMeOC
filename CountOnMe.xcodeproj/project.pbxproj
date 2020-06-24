@@ -91,7 +91,6 @@
 			children = (
 				C29EACAB24699D5400F3B69A /* Default-568h@2x.png */,
 				1FA43BD1224E569900F565CB /* CountOnMe */,
-				C29EACA624699AEB00F3B69A /* View */,
 				C29EACA824699B0100F3B69A /* SupportingFiles */,
 				C29EACB22469A8F700F3B69A /* CountOnMeTests */,
 				C241645124A2166F0004160E /* CountOnMeUITests */,
@@ -113,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				1FA43BDE224E569A00F565CB /* Info.plist */,
+				C29EACA624699AEB00F3B69A /* View */,
 				C29EACA5246999EC00F3B69A /* Model */,
 				C29EACA724699AF700F3B69A /* Controller */,
 			);
