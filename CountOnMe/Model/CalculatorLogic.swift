@@ -26,7 +26,7 @@ class CalculatorLogic {
             return try divide(dividing: leftNumber, with: rightNumber)
         case "+":
             return add(adding: leftNumber, and: rightNumber)
-        case"-":
+        case "-":
             return substract(substracting: leftNumber, and: rightNumber)
         default:
             throw CalculatorError.unKnownOperator

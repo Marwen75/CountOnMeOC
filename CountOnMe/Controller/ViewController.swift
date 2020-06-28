@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet var numberButtons: [UIButton]!
     
     // MARK: - Properties
-    private var calculatorLogic = CalculatorLogic(parser: Parser())
+    private let calculatorLogic = CalculatorLogic(parser: Parser())
     private var expressionHaveResult: Bool {
            return textView.text.firstIndex(of: "=") != nil
        }
