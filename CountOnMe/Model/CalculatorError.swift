@@ -10,7 +10,7 @@ import Foundation
 
 // This object lists all possible errors, it inherits from the LocalizedError Protocol 
 
-enum CalculatorError: LocalizedError {
+enum CalculatorError: Error {
     case incorrectExpression
     case operationBeginsWithOperator
     case divisionByZero
