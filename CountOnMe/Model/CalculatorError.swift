@@ -17,10 +17,10 @@ enum CalculatorError: Error {
     case equalIsAlreadyPressed
     case unKnownOperator
 
-    var errorDescription: String? {
+    var errorDescription: String {
        return "Oups !"
     }
-    var failureReason: String? {
+    var failureReason: String {
         switch self {
         case .incorrectExpression:
             return "Votre expression est incorrecte."

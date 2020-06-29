@@ -10,19 +10,21 @@ import XCTest
 
 class CountOnMeUITests: XCTestCase {
     
+    var app: XCUIApplication!
+    
     override func setUp() {
-        // In UI tests it is usually best to stop immediately when a failure occurs.
+        super.setUp()
         continueAfterFailure = false
+        app = XCUIApplication()
+        app.launch()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        app = nil
+        super.tearDown()
     }
     // MARK: - TESTS
     func testAllNumberButtons() {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
         
         app.buttons["0"].tap()
         app.buttons["1"].tap()
@@ -43,8 +45,6 @@ class CountOnMeUITests: XCTestCase {
     }
     
     func testExpressionWithNumberButtonsOperatorsAndEqual() {
-        let app = XCUIApplication()
-        app.launch()
         
         let button = app.buttons["2"]
         button.tap()
@@ -62,8 +62,6 @@ class CountOnMeUITests: XCTestCase {
     }
     
     func testClearButton() {
-        let app = XCUIApplication()
-        app.launch()
         
         app.buttons["1"].tap()
         app.buttons["2"].tap()
@@ -75,8 +73,6 @@ class CountOnMeUITests: XCTestCase {
     }
     
     func testButtonsAfterEqualWasPressed() {
-        let app = XCUIApplication()
-        app.launch()
         
         let button = app.buttons["1"]
         button.tap()
@@ -98,8 +94,6 @@ class CountOnMeUITests: XCTestCase {
     }
     
     func testAlertDisplayer() {
-        let app = XCUIApplication()
-        app.launch()
         
         let button = app.buttons["1"]
         button.tap()

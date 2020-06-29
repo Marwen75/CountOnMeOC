@@ -59,7 +59,7 @@ class ViewController: UIViewController {
             let result = try calculatorLogic.calculate(from: textView.text)
             textView.text.append(" = \(result)")
         } catch let error as CalculatorError {
-            displayAlert(title: error.errorDescription!, message: error.failureReason!)
+            displayAlert(title: error.errorDescription, message: error.failureReason)
             textView.text.removeAll()
         } catch {
             displayAlert(title: "Oups", message: "Une erreur est survenue ")

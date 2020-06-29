@@ -66,8 +66,6 @@ class CalculatorLogicTestCase: XCTestCase {
     func testGivenMultipleNumbersWithMultipleOperators_WhenPriorityOperatorDivideIsInsideTheOperations_ThenTheResultMustBeCorrect() throws {
         let result = try logic.calculate(from: "10 + 12 / 2")
         
-        XCTAssertNoThrow(try logic.calculate(from: "10 + 12 / 2"))
-        
         XCTAssertTrue(result == 16.0)
     }
     
